@@ -1,0 +1,5 @@
+forward /1e-20/
+stop /1e-20/
+play /1e-10/
+sing /1e-10/
+speak /1e-10/

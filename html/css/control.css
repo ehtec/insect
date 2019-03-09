@@ -1,0 +1,144 @@
+.button1 {
+   background-color: rgb(0,255,255);
+   border: none;
+   font-weight: bold;
+   font-size: 55px;
+   height: 120px;
+   width: 40%;
+   border-radius: 25px;
+   margin: 10px;
+}
+
+.text1 {
+   font-family: Arial;
+   font-size: 25px;
+}
+
+.text2 {
+   font-family: Arial;
+   font-size: 38px;
+   font-weight: bold;
+   text-align: center;
+}
+
+.button2 {
+   background-color: rgb(248,24,148);
+   border: none;
+   font-weight: bold;
+   font-size: 45px;
+   height: 100px;
+   width: 40%;
+   border-radius: 25px;
+   margin: 10px;
+}
+
+.slidecontainer {
+   text-align: center;
+   width: 97%;
+   margin-bottom: 25px;
+}
+
+.slider {
+   -webkit-appearance: none;
+   appearance: none;
+   width: 95%;
+   height: 25px;
+   background: #d3d3d3;
+   outline: none;
+   opacity: 0.7;
+   -webkit-transition: .2s;
+   transition: opacity .2s;
+   margin: 10px;
+}
+
+.slider:hover {
+   opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+   -webkit-appearance: none;
+   appearance: none;
+   width: 25px;
+   height: 25px;
+   background: #4CAF50;
+   cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+   width: 25px;
+   height: 25px;
+   background: #4CAF50;
+   cursor: pointer;
+}
+
+.text3 {
+  font-family: Arial;
+  font-size: 36px;
+  margin: 10px;
+}
+
+.button3 {
+   background-color: #4CAF50;
+   border: none;
+   font-weight: bold;
+   font-size: 22px;
+   height: 60px;
+   width: 40%;
+   border-radius: 10px;
+}
+
+.button4 {
+   background-color: rgb(255,99,71);
+   border: none;
+   font-weight: bold;
+   font-size: 30px;
+   height: 90px;
+   width: 40%;
+   border-radius: 15px;
+   margin: 10px;
+}
+
+.button5 {
+   background-color: #00FF00;
+   border: none;
+   font-weight: bold;
+   font-size: 40px;
+   height: 90px;
+   width: 97%;
+   border-radius: 15px;
+   margin: 10px;
+   text-align: center;
+}
+
+.button6 {
+   background-color: rgb(119, 136, 153);
+   color: black;
+   border: none;
+   font-size: 28px;
+   height: 60px;
+   width: 97%;
+   border-radius: 10px;
+   margin: 10px;
+   text-align: center;
+}
+
+.button7 {
+   background-color: black;
+   color: white;
+   border: none;
+   font-weight: bold;
+   font-size: 30px;
+   height: 90px;
+   width: 40%;
+   border-radius: 15px;
+   margin: 10px;
+}
+
+.custom-select {
+   background-color: rgb(0,191,255);
+   width: 97%;
+   height: 40px;
+   color: black;
+   border-radius: 5px;
+}
+

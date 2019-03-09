@@ -1,0 +1,114 @@
+WARNING: These instructions were not thoroughly tested and may be incomplete. Please open an issue if you experience problems. Only created for raspberry pi!
+
+1) Install apt packages
+
+sudo apt-get update
+sudo apt-get upgrade
+
+sudo apt-get install gstreamer-1.0 gstreamer1.0-tools apache2 libapache2-mod-php libopus-dev libmicrohttpd-dev libjansson-dev libssl-dev libsrtp-dev libsofia-sip-ua-dev libglib2.0-dev libopus-dev libogg-dev libcurl4-openssl-dev liblua5.3-dev libconfig-dev pkg-config gengetopt libtool automake git bison python-dev swig make gedit firefox-esr vorbis-tools espeak libboost-all-dev ffmpeg
+
+2) Git clone
+
+cd /home/pi
+
+git clone https://github.com/ehtec/insect
+git clone https://github.com/cmusphinx/sphinxbase
+git clone https://github.com/cmusphinx/pocketsphinx
+git clone https://github.com/cmusphinx/sphinxtrain
+git clone https://github.com/meetecho/janus-gateway
+git clone https://github.com/silvanmelchior/RPi_Cam_Web_Interface
+
+3) Compile CMUSphinx
+
+cd /home/pi/sphinxbase
+./autogen.sh
+make -j4
+sudo make install
+
+cd /home/pi/pocketsphinx
+make -j4
+sudo make install
+
+cd /home/pi/sphinxtrain
+make -j4
+sudo make install
+
+4) Compile Janus
+
+cd /home/pi/janus-gateway
+sh autogen.sh
+./configure --prefix=/opt/janus
+make -j4
+sudo make install
+sudo make configs
+
+5) Install RPi_Cam_Web_Interface
+
+cd /home/pi/RPi_Cam_Web_Interface
+./install.sh
+
+Set password!
+
+6) Copying files
+
+Copy janus.plugin.streaming.cfg to /opt/janus/etc/janus
+
+Copy the content of systemd to /etc/systemd/system
+
+Copy the content of html to /var/www/html
+
+Create directory uploads: mkdir -p /var/www/html/uploads
+chmod 777 /var/www/html/uploads
+
+7) Set default audio to usb sound card
+
+gedit /usr/share/alsa/alsa.conf
+
+will show:
+
+defaults.ctl.card 0
+defaults.pcm.card 0
+
+change it to:
+
+defaults.ctl.card 1
+defaults.pcm.card 1
+
+8) In /etc/systemd/journald.conf
+
+RateLimitIntervalSec=1s
+RateLimitBurst=2000
+
+9) Make sh scripts executable
+
+chmod +x /home/pi/insect/sh/insectdaemon.sh
+chmod +x /home/pi/insect/sh/gstreamer.sh
+
+10) Compile insect
+
+cd /home/pi/insect
+
+g++ src/server.c -o bin/server.out -Wall -pthread -lwiringPi $(pkg-config --cflags --libs gstreamer-1.0)
+
+11) Set apache privatetmp false
+
+In apache2.service:
+
+PrivateTmp=False
+
+12) Enable services on startup:
+
+sudo systemctl enable apache2
+sudo systemctl enable janus
+sudo systemctl enable insectgst
+sudo systemctl enable insectdaemon
+
+13) Reboot
+
+Finished!
+
+Go to http://robot:ip:add:ress/html/index.php
+
+You will be prompted for password, then to insect control panel.
+
+

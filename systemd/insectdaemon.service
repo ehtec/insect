@@ -1,0 +1,13 @@
+[Unit]
+Description=Insect daemon
+After=network.target apache2.service insectgst.service janus.service
+
+[Service]
+Type=idle
+Restart=on-abnormal
+ExecStart=/home/pi/insect/sh/insectdaemon.sh
+User=pi
+Environment=DISPLAY=:0
+
+[Install]
+WantedBy=multi-user.target

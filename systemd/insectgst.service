@@ -1,0 +1,13 @@
+[Unit]
+Description=Insect microphone gstreamer service
+After=network.target
+
+[Service]
+Type=idle
+Restart=always
+ExecStart=/home/pi/insect/gstreamer.sh
+User=pi
+Environment=DISPLAY=:0
+
+[Install]
+WantedBy=multi-user.target
