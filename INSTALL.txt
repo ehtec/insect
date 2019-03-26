@@ -5,7 +5,7 @@ WARNING: These instructions were not thoroughly tested and may be incomplete. Pl
 sudo apt-get update
 sudo apt-get upgrade
 
-sudo apt-get install gstreamer-1.0 gstreamer1.0-tools apache2 libapache2-mod-php libopus-dev libmicrohttpd-dev libjansson-dev libssl-dev libsrtp-dev libsofia-sip-ua-dev libglib2.0-dev libopus-dev libogg-dev libcurl4-openssl-dev liblua5.3-dev libconfig-dev pkg-config gengetopt libtool automake git bison python-dev swig make gedit firefox-esr vorbis-tools espeak libboost-all-dev ffmpeg
+sudo apt-get install gstreamer-1.0 gstreamer1.0-tools apache2 libapache2-mod-php libopus-dev libmicrohttpd-dev libjansson-dev libssl-dev libsrtp-dev libsofia-sip-ua-dev libglib2.0-dev libopus-dev libogg-dev libcurl4-openssl-dev liblua5.3-dev libconfig-dev pkg-config gengetopt libtool automake git bison python-dev swig make gedit firefox-esr vorbis-tools espeak libboost-all-dev ffmpeg python3-dev
 
 2) Git clone
 
@@ -88,7 +88,7 @@ chmod +x /home/pi/insect/sh/gstreamer.sh
 
 cd /home/pi/insect
 
-g++ src/server.c -o bin/server.out -Wall -pthread -lwiringPi $(pkg-config --cflags --libs gstreamer-1.0)
+g++ src/server.c -o bin/server.out -Wall -pthread -lwiringPi -lpython3.5m -I/usr/include/python3.5m $(pkg-config --cflags --libs gstreamer-1.0)
 
 11) Set apache privatetmp false
 

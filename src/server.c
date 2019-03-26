@@ -221,12 +221,12 @@ concat(vector <MotorGroup> mtg0, vector <MotorGroup> mtg1, vector <MotorGroup> m
 
 std::map<int, bool> listen(vector <MotorGroup> &mtg, map <int,bool> dictlist, bool walk = FALSE) {
     auto size = mtg.size();
-    
+
     for (std::size_t i = 0; i < size; i++) {
         MotorGroup &mot = mtg[i];
         if (dictlist.find(i) == dictlist.end()){
             } else {
-            continue;    
+            continue;
             }
         if(mot.reversed){
             int last = mot.last;
@@ -247,7 +247,7 @@ std::map<int, bool> listen(vector <MotorGroup> &mtg, map <int,bool> dictlist, bo
                 mot.chill();
             }
         }}
-        
+
         if (mot.last == mot.BTN1) {
             if (revertnorm) {
                 if (!mot.reversed) {
@@ -261,9 +261,9 @@ std::map<int, bool> listen(vector <MotorGroup> &mtg, map <int,bool> dictlist, bo
                     mot.revert();
                 };
             };
-        } 
+        }
         if(mot.last == mot.BTN2) {
-            
+
             if (revertnorm) {
                 if (!mot.reversed) {
                     mot.backward();
@@ -281,7 +281,7 @@ std::map<int, bool> listen(vector <MotorGroup> &mtg, map <int,bool> dictlist, bo
         printf(" ");
         std::cout << mot.last;
         printf(" ");
-        
+
         //~ //check all relay status
         printf("%d", digitalRead(mot.RELAY1));
         printf("%d", digitalRead(mot.RELAY2));
@@ -410,7 +410,7 @@ void motorcontrolloop() {
         };
         printf("\n");
     };
-    
+
     while (::stopgoing) {
         //sleep for better cpu
         sleep(0.05);
@@ -487,8 +487,8 @@ void motorcontrolloop() {
         ::stopgoing = false;
             }
         }
-    
-    
+
+
     }
 
 void gstwaitloop() {
@@ -562,7 +562,7 @@ bus_callx(GstBus * busx, GstMessage * msgx, gpointer data)
     default:
         break;
     }
-    
+
     const GstStructure *st = gst_message_get_structure(msgx);
     if (st && strcmp(gst_structure_get_name(st), "pocketsphinx") == 0) {
 	if (g_value_get_boolean(gst_structure_get_value(st, "final"))) {
@@ -654,7 +654,7 @@ void langctrlloop() {
   g_main_loop_unref(loopx);
 
   //return 0;
-  
+
 }
 
 void stopall() {
@@ -1025,7 +1025,7 @@ int main(int argc, char **argv)
 
   puts("Quitting.");
 
-  //stopping camera, gat, server
+  //stopping camera, gst, server
   stopall();
 
   return 0;
