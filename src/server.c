@@ -16,9 +16,9 @@
 #include <sys/stat.h>
 #include <gst/gst.h>
 #include <math.h>
-#include <wiringPi.h>
-#include <mcp23017.h>
-#include "./MotorGroup.h"
+//#include <wiringPi.h>
+//#include <mcp23017.h>
+//#include "./MotorGroup.h"
 #include <vector>
 #include <numeric>
 #include <algorithm>
@@ -27,6 +27,7 @@
 #include <map>
 #include <random>
 #include <glib.h>
+#include <Python.h>
 
 using namespace std;
 using std::vector;
@@ -36,7 +37,15 @@ using std::vector;
 #define RPI_CAM_WEB_INTERFACE_PATH "/home/pi/RPi_Cam_Web_Interface/"
 #define SHUTDOWN_CMD "sudo shutdown 1"
 #define REBOOT_CMD "sudo shutdown -r 1"
-#define MAXVOL 1.0
+#define MAXVOL 1.2
+
+/*
+
+compile with:
+
+g++ -Wall server.c -o server.out -pthread -lpython3.5m -I/usr/include/python3.5m $(pkg-config --cflags --libs gstreamer-1.0)
+
+*/
 
 int server;
 
@@ -67,7 +76,7 @@ bool langctrl = false;
 bool revertnorm = FALSE;
 bool revertrev = true;
 bool isgoing = false;
-bool stopgoing = false;
+//bool stopgoing = false;
 
 //commandlist
 std::list<string> cmdList;
@@ -79,8 +88,8 @@ std::string thevalue;
 std::string pockres;
 
 //define valid commands for speech recognition
-vector<string> validCommands = { "play", "sing", "speak"  };
-//vector<string> validCommands = { "play", "sing", "forward", "stop" };
+//vector<string> validCommands = { "play", "sing", "speak"  };
+vector<string> validCommands = { "play", "sing", "forward", "stop" };
 
 //gstreamer elements for audio player
 GstElement *pipeline;
@@ -103,6 +112,10 @@ inline bool is_command(const std::string& y) {
 }
 
 void espeak(char speakstr[100]) {
+  bool langctrlorig2;
+  //turn off language control
+  langctrlorig2 = ::langctrl;
+  ::langctrl = false;
   char speakcmdstr[100];
   strcpy(speakcmdstr, "espeak \"");
   strcat(speakcmdstr, speakstr);
@@ -110,6 +123,7 @@ void espeak(char speakstr[100]) {
   std::cout<<"Speaking: "<<speakstr<<"\n";
   system(speakcmdstr);
   puts("Spoken.");
+  ::langctrl = langctrlorig2;
 }
 
 void speakfeedback(const char addstr[100]) {
@@ -172,7 +186,7 @@ void gstwait() {
   msg = gst_bus_timed_pop_filtered (bus, GST_CLOCK_TIME_NONE, (GstMessageType)(GST_MESSAGE_ERROR | GST_MESSAGE_EOS));
 }
 
-std::vector <std::vector<MotorGroup>>
+/*std::vector <std::vector<MotorGroup>>
 concat(vector <MotorGroup> mtg0, vector <MotorGroup> mtg1, vector <MotorGroup> mtg2, vector <MotorGroup> mtg3) {
     auto size1 = mtg0.size();
     auto size2 = mtg1.size();
@@ -364,10 +378,10 @@ std::tuple <MotorGroup, MotorGroup, MotorGroup, MotorGroup> hardcoded(int pino, 
     MotorGroup mot3(pino + 4, pino + 5, pino + 12, pino + 13, 0, FALSE);
     MotorGroup mot4(pino + 6, pino + 7, pino + 14, pino + 15, 0, FALSE);
     return std::make_tuple(mot1, mot2, mot3, mot4);
-}
+}*/
 
 void motorcontrolloop() {
-    std::vector <MotorGroup> mtg0 = setup(65, 0x20);
+    /*std::vector <MotorGroup> mtg0 = setup(65, 0x20);
     std::vector <MotorGroup> mtg1 = setup(81, 0x21);
     std::vector <MotorGroup> mtg2 = setup(97, 0x22);
     std::vector <MotorGroup> mtg3 = setup(113, 0x23);
@@ -378,13 +392,20 @@ void motorcontrolloop() {
     std::map<int, bool> revdone;
     bool swiffle = TRUE;
     static bool initialized = false;
+*/
+    Py_Initialize();
+  //PyImport_ImportModule("sys");
+  //PyRun_SimpleString("sys.path.insert(0,'/home/pi/insect/python/')\n");
+    PyRun_SimpleString("from robot import Robot\n""r = Robot(4)\n""r.motorassignment(6,3,10)\n");
 
     while (TRUE) {
     //sleep for better cpu
     sleep(0.05);
     while (::isgoing) {
+        //run python functions
+        PyRun_SimpleString("r.forwards()\n");
         //sleep for better cpu
-        sleep(0.05);
+        /*sleep(0.05);
         std::map<int, bool> crntnm = listen(norm, normdone, TRUE);
         normdone.insert(crntnm.begin(), crntnm.end());
         printf("\t");
@@ -485,6 +506,7 @@ void motorcontrolloop() {
             }
         }
         ::stopgoing = false;
+            }*/
             }
         }
 
@@ -663,10 +685,12 @@ void stopall() {
   //sleep(5);
   //Also reset all gpio pins here!
   ::isgoing = false;
-  ::stopgoing = true;
-  while (::stopgoing){
+  sleep(15);
+  Py_Finalize();
+  //::stopgoing = true;
+  /*while (::stopgoing){
   sleep(0.1);
-  }
+  }*/
   //stopping camera
   char stopcmd[100];
   strcpy(stopcmd, RPI_CAM_WEB_INTERFACE_PATH);
@@ -833,7 +857,7 @@ void check_for_msg()
           sleep(0.5);
         }
         //spoken feedback
-        if (::feedbacklevel > 0) {
+        if (::feedbacklevelorig > 0) {
           if (::thevalue == "helterskelter") {
             speakfeedback("Playing Helter Skelter.");
           } else if (::thevalue == "bundeshymne") {
@@ -904,9 +928,9 @@ void check_for_msg()
           } else {
             puts("An error occured. Cannot play audio file.");
             }
-         /* puts("Switch language control and speakfeedback to original values.");
+          puts("Switch language control and speakfeedback to original values.");
           ::langctrl=langctrlorig;
-          ::feedbacklevel=feedbacklevelorig;*/
+          ::feedbacklevel=feedbacklevelorig;
       } else if (thekey == "stopsound") {
         puts("Stopsound command detected.");
         if (::isplaying) {
@@ -922,25 +946,43 @@ void check_for_msg()
         if (camval == 0) {
           puts("Starting camera.");
           strcat(camcmd, "start.sh");
+          if (feedbacklevel > 0) {
+            speakfeedback("Starting camera.");
+          }
         } else {
           puts("Stopping camera.");
+          if (feedbacklevel > 0) {
+            speakfeedback("Starting camera.");
+          }
           strcat(camcmd, "stop.sh");
         }
         system(camcmd);
         //sleeping to avoid too fast switch on/off
         sleep(5);
       } else if (thekey == "shutdown") {
+          if (feedbacklevel > 0) {
+            speakfeedback("Shutting down.");
+          }
           shutdown();
       } else if (thekey == "reboot") {
+          if (feedbacklevel > 0) {
+            speakfeedback("Rebooting.");
+          }
           reboot();
       } else if (thekey == "langctrl") {
           int langval = std::stoi(thevalue);
           if (langval == 0) {
             puts("Switching on language control.");
+            if (feedbacklevel > 0) {
+              speakfeedback("Switching on language control.");
+            }
             ::langctrl = true;
             ::langctrlorig = true;
           } else {
             puts("Switching off language control.");
+            if (feedbacklevel > 0) {
+              speakfeedback("Switching off language control.");
+            }
             ::langctrl = false;
             ::langctrlorig = false;
           }
@@ -949,19 +991,32 @@ void check_for_msg()
           int thevolume = std::stoi(thevalue);
           int therealvolume = round(thevolume * MAXVOL);
           std::string volpercent = std::to_string(therealvolume);
-          std::cout<<"Changing volume to "<<thevolume<<"%\n";
+          std::cout<<"Changing volume to "<<thevalue<<"%\n";
+          if (feedbacklevel >0 ){
+            char chvolstr[100];
+            strcat(chvolstr, "Changing volume to ");
+            strcpy(chvolstr, thevalue.c_str());
+            strcpy(chvolstr, " percent.");
+            speakfeedback(chvolstr);
+          }
           strcpy(volstr, "pactl set-sink-volume @DEFAULT_SINK@ ");
           strcat(volstr, volpercent.c_str());
           strcat(volstr, "%");
           system(volstr);
           puts("Changed volume.");
       } else if (thekey == "forward") {
+          if (feedbacklevel > 0) {
+            speakfeedback("Going forward.");
+          }
           //forward here
           ::isgoing = true;
       } else if (thekey == "stop") {
           //stop here
+          if (feedbacklevel > 0) {
+            speakfeedback("Stopping.");
+          }
           ::isgoing = false;
-          ::stopgoing = true;
+          //::stopgoing = true;
       } else if (thekey == "feedbacklevel") {
           int newlevel = std::stoi(thevalue);
           ::feedbacklevel=newlevel;
@@ -1025,7 +1080,7 @@ int main(int argc, char **argv)
 
   puts("Quitting.");
 
-  //stopping camera, gst, server
+  //stopping camera, gat, server
   stopall();
 
   return 0;
