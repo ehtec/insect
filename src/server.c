@@ -37,7 +37,7 @@ using std::vector;
 #define RPI_CAM_WEB_INTERFACE_PATH "/home/pi/RPi_Cam_Web_Interface/"
 #define SHUTDOWN_CMD "sudo shutdown 1"
 #define REBOOT_CMD "sudo shutdown -r 1"
-#define MAXVOL 1.2
+#define MAXVOL 1.3
 
 /*
 
@@ -522,9 +522,9 @@ void gstwaitloop() {
       ::isplaying = false;
       ::stopplaying = true;
       puts("Gstwait thread deteced audio has finished, sending free command.");
-      puts("Switch language control and speakfeedback to original values.");
-      ::langctrl=::langctrlorig;
-      ::feedbacklevel=::feedbacklevelorig;
+      //puts("Switch language control and speakfeedback to original values.");
+      //::langctrl=::langctrlorig;
+      //::feedbacklevel=::feedbacklevelorig;
     }
   }
 }
@@ -848,6 +848,7 @@ void check_for_msg()
       if (thekey == "play") {
         puts("Detected play command.");
         puts("Stopping language control and speakfeedback.");
+        sleep(0.5);
         ::langctrlorig = ::langctrl;
         ::feedbacklevelorig = ::feedbacklevel;
         ::langctrl=false;
@@ -928,9 +929,9 @@ void check_for_msg()
           } else {
             puts("An error occured. Cannot play audio file.");
             }
-          puts("Switch language control and speakfeedback to original values.");
-          ::langctrl=langctrlorig;
-          ::feedbacklevel=feedbacklevelorig;
+          //puts("Switch language control and speakfeedback to original values.");
+          //::langctrl=langctrlorig;
+          //::feedbacklevel=feedbacklevelorig;
       } else if (thekey == "stopsound") {
         puts("Stopsound command detected.");
         if (::isplaying) {
