@@ -321,7 +321,7 @@
       Copyright 2019 ehtec<br>
       This document is released under the GNU public license.<br>
       Many Thanks to silvanmelchior and meetecho, their code has been included in the project.<br>
-      For further information, visit our homepage: <a href="https://ehtec.cloudaccess.host" target="_blank">ehtec.cloudaccess.host</a></p>
+      For further information, visit our homepage: <a href="https://www.ehtec.co" target="_blank">https://www.ehtec.co</a></p>
     </div>
     <br>
     <div class="panel panel-default" style="clear: left; margin: 10px;">
